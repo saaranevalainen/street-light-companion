@@ -58,17 +58,17 @@ function useSignal() {
 function Index() {
   const time = useClock();
   const { seconds, green } = useSignal();
-  const [destinationId, setDestinationId] = useState(destinations[0].id);
+  const [destinationId, setDestinationId] = useState(destinations[0]!.id);
   const [selectedMode, setSelectedMode] = useState<Option["mode"] | null>(null);
 
   const destination = useMemo(
-    () => destinations.find((d) => d.id === destinationId) ?? destinations[0],
+    () => destinations.find((d) => d.id === destinationId) ?? destinations[0]!,
     [destinationId],
   );
   const recommended = fastest(destination.options);
   const selected =
     destination.options.find((o) => o.mode === (selectedMode ?? recommended)) ??
-    destination.options[0];
+    destination.options[0]!;
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-signal selection:text-background">
