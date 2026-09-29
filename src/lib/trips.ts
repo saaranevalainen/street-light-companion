@@ -18,241 +18,72 @@ export type Destination = {
 };
 
 export const crossing = {
-  id: "CROSSING·04",
-  name: "Market St & 5th",
+  id: "ROVANIEMI·04",
+  name: "Koskikatu & Rovakatu",
 };
 
+function dest(
+  id: string,
+  name: string,
+  km: number,
+  walk: [number, string],
+  bus: [string, string, number, string],
+  ride: [string, number, string, string],
+): Destination {
+  return {
+    id,
+    name,
+    distanceKm: km,
+    options: [
+      {
+        mode: "walk",
+        badge: "W",
+        name: "WALK",
+        note: "ON FOOT · MIND THE ICE",
+        minutes: walk[0],
+        cost: "FREE",
+        steps: [
+          { title: "Cross here on green", meta: "START · NOW" },
+          { title: walk[1], meta: `${km.toFixed(1)} KM` },
+          { title: name, meta: `ARRIVE IN ${walk[0]} MIN` },
+        ],
+      },
+      {
+        mode: "bus",
+        badge: "B",
+        name: `LINKKARI ${bus[0]}`,
+        note: `NEXT DEPARTS ${bus[1]}`,
+        minutes: bus[2],
+        cost: "€3.50",
+        steps: [
+          { title: "Cross here on green", meta: "START · NOW" },
+          { title: "Stop at Koskikatu, 100 m", meta: `BOARD ${bus[1]}` },
+          { title: name, meta: `${bus[3]} · ${bus[2]} MIN` },
+        ],
+      },
+      {
+        mode: "ride",
+        badge: "S",
+        name: "SHARED RIDE",
+        note: ride[0],
+        minutes: ride[1],
+        cost: ride[2],
+        steps: [
+          { title: "Crossing 04", meta: "START · NOW" },
+          { title: "Pickup at curb, bay 1", meta: ride[3] },
+          { title: name, meta: `ARRIVE IN ${ride[1]} MIN` },
+        ],
+      },
+    ],
+  };
+}
+
 export const destinations: Destination[] = [
-  {
-    id: "riverside",
-    name: "Riverside Market",
-    distanceKm: 1.2,
-    options: [
-      {
-        mode: "walk",
-        badge: "W",
-        name: "WALK",
-        note: "ON FOOT",
-        minutes: 14,
-        cost: "FREE",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "Follow 5th along the river", meta: "1.2 KM" },
-          { title: "Riverside Market", meta: "ARRIVE IN 14 MIN" },
-        ],
-      },
-      {
-        mode: "bus",
-        badge: "B",
-        name: "BUS 12",
-        note: "NEXT DEPARTS 18:47",
-        minutes: 9,
-        cost: "€2.40",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "Stop at north curb, 120 m", meta: "BOARD 18:47" },
-          { title: "Riverside Market", meta: "2 STOPS · 9 MIN" },
-        ],
-      },
-      {
-        mode: "ride",
-        badge: "S",
-        name: "SHARED RIDE",
-        note: "SURGE ×1.3",
-        minutes: 6,
-        cost: "€4.80",
-        steps: [
-          { title: "Crossing 04", meta: "START · NOW" },
-          { title: "Pickup at curb, bay 2", meta: "WAIT ~2 MIN" },
-          { title: "Riverside Market", meta: "ARRIVE IN 6 MIN" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "oldtown",
-    name: "Old Town",
-    distanceKm: 0.6,
-    options: [
-      {
-        mode: "walk",
-        badge: "W",
-        name: "WALK",
-        note: "ON FOOT",
-        minutes: 8,
-        cost: "FREE",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "Cut through Mill Lane", meta: "0.6 KM" },
-          { title: "Old Town", meta: "ARRIVE IN 8 MIN" },
-        ],
-      },
-      {
-        mode: "bus",
-        badge: "B",
-        name: "BUS 3",
-        note: "NEXT DEPARTS 18:51",
-        minutes: 11,
-        cost: "€2.40",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "Stop at east curb, 80 m", meta: "BOARD 18:51" },
-          { title: "Old Town", meta: "1 STOP · 11 MIN" },
-        ],
-      },
-      {
-        mode: "ride",
-        badge: "S",
-        name: "SHARED RIDE",
-        note: "NO SURGE",
-        minutes: 5,
-        cost: "€3.60",
-        steps: [
-          { title: "Crossing 04", meta: "START · NOW" },
-          { title: "Pickup at curb, bay 1", meta: "WAIT ~3 MIN" },
-          { title: "Old Town", meta: "ARRIVE IN 5 MIN" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "central",
-    name: "Central Station",
-    distanceKm: 2.4,
-    options: [
-      {
-        mode: "walk",
-        badge: "W",
-        name: "WALK",
-        note: "ON FOOT",
-        minutes: 29,
-        cost: "FREE",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "North along Market St", meta: "2.4 KM" },
-          { title: "Central Station", meta: "ARRIVE IN 29 MIN" },
-        ],
-      },
-      {
-        mode: "bus",
-        badge: "B",
-        name: "BUS 12",
-        note: "NEXT DEPARTS 18:47",
-        minutes: 13,
-        cost: "€2.40",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "Stop at north curb, 120 m", meta: "BOARD 18:47" },
-          { title: "Central Station", meta: "5 STOPS · 13 MIN" },
-        ],
-      },
-      {
-        mode: "ride",
-        badge: "S",
-        name: "SHARED RIDE",
-        note: "SURGE ×1.6",
-        minutes: 10,
-        cost: "€9.20",
-        steps: [
-          { title: "Crossing 04", meta: "START · NOW" },
-          { title: "Pickup at curb, bay 2", meta: "WAIT ~4 MIN" },
-          { title: "Central Station", meta: "ARRIVE IN 10 MIN" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "harbor",
-    name: "Harbor Pier",
-    distanceKm: 1.8,
-    options: [
-      {
-        mode: "walk",
-        badge: "W",
-        name: "WALK",
-        note: "ON FOOT",
-        minutes: 22,
-        cost: "FREE",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "Down the quay path", meta: "1.8 KM" },
-          { title: "Harbor Pier", meta: "ARRIVE IN 22 MIN" },
-        ],
-      },
-      {
-        mode: "bus",
-        badge: "B",
-        name: "BUS 7",
-        note: "NEXT DEPARTS 18:55",
-        minutes: 16,
-        cost: "€2.40",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "Stop at south curb, 90 m", meta: "BOARD 18:55" },
-          { title: "Harbor Pier", meta: "4 STOPS · 16 MIN" },
-        ],
-      },
-      {
-        mode: "ride",
-        badge: "S",
-        name: "SHARED RIDE",
-        note: "SURGE ×1.2",
-        minutes: 8,
-        cost: "€6.40",
-        steps: [
-          { title: "Crossing 04", meta: "START · NOW" },
-          { title: "Pickup at curb, bay 2", meta: "WAIT ~2 MIN" },
-          { title: "Harbor Pier", meta: "ARRIVE IN 8 MIN" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "northgate",
-    name: "North Gate",
-    distanceKm: 3.1,
-    options: [
-      {
-        mode: "walk",
-        badge: "W",
-        name: "WALK",
-        note: "ON FOOT",
-        minutes: 37,
-        cost: "FREE",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "North along the ring road", meta: "3.1 KM" },
-          { title: "North Gate", meta: "ARRIVE IN 37 MIN" },
-        ],
-      },
-      {
-        mode: "bus",
-        badge: "B",
-        name: "BUS 12",
-        note: "NEXT DEPARTS 18:47",
-        minutes: 18,
-        cost: "€2.40",
-        steps: [
-          { title: "Cross here on green", meta: "START · NOW" },
-          { title: "Stop at north curb, 120 m", meta: "BOARD 18:47" },
-          { title: "North Gate", meta: "7 STOPS · 18 MIN" },
-        ],
-      },
-      {
-        mode: "ride",
-        badge: "S",
-        name: "SHARED RIDE",
-        note: "SURGE ×1.1",
-        minutes: 12,
-        cost: "€10.60",
-        steps: [
-          { title: "Crossing 04", meta: "START · NOW" },
-          { title: "Pickup at curb, bay 2", meta: "WAIT ~3 MIN" },
-          { title: "North Gate", meta: "ARRIVE IN 12 MIN" },
-        ],
-      },
-    ],
-  },
+  dest("santa", "Santa Claus Village", 8.0, [95, "North along Jätkänkynttilä bridge & Route 4"], ["8", "21:14", 22, "12 STOPS"], ["NO SURGE", 12, "€19.80", "WAIT ~3 MIN"]),
+  dest("arktikum", "Arktikum", 1.1, [13, "Along Pohjoisranta riverside"], ["3", "21:12", 7, "3 STOPS"], ["NO SURGE", 4, "€8.40", "WAIT ~2 MIN"]),
+  dest("station", "Railway Station", 1.4, [17, "West on Koskikatu, Ratakatu"], ["1", "21:10", 6, "4 STOPS"], ["SURGE ×1.2", 5, "€9.60", "WAIT ~2 MIN"]),
+  dest("ounasvaara", "Ounasvaara Ski Hill", 3.2, [40, "Over Jätkänkynttilä bridge, uphill trail"], ["4", "21:18", 14, "7 STOPS"], ["NO SURGE", 8, "€13.20", "WAIT ~4 MIN"]),
+  dest("airport", "Rovaniemi Airport", 9.5, [115, "North via Lentokentäntie"], ["8", "21:14", 25, "14 STOPS"], ["SURGE ×1.3", 14, "€24.50", "WAIT ~3 MIN"]),
 ];
 
 export function fastest(options: Option[]): Mode {
