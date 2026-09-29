@@ -19,6 +19,8 @@ export const Route = createFileRoute("/")({
         content:
           "Live time and price comparison for walking, bus and shared rides, shown right at the traffic light.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Index,
