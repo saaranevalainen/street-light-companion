@@ -2,17 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
 import { crossing, destinations, fastest, type Option } from "@/lib/trips";
+import { partners } from "@/lib/partners";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Crossing — walk, bus or ride, decided at the light" },
+      { title: "Crossing Rovaniemi — walk, bus or ride at the light" },
       {
         name: "description",
         content:
-          "Standing at a pedestrian crossing? Compare time and price for walking, taking the bus or a shared ride before the signal changes.",
+          "At a Rovaniemi crossing? Compare walk, Linkkari bus and shared ride times and prices, plus last-minute deals from nearby cafés and salons.",
       },
-      { property: "og:title", content: "Crossing — walk, bus or ride, decided at the light" },
+      { property: "og:title", content: "Crossing Rovaniemi — walk, bus or ride at the light" },
       {
         property: "og:description",
         content:
@@ -59,6 +60,7 @@ function Index() {
   const time = useClock();
   const { seconds, green } = useSignal();
   const [destinationId, setDestinationId] = useState(destinations[0]!.id);
+  const [booked, setBooked] = useState<Record<string, boolean>>({});
   const [selectedMode, setSelectedMode] = useState<Option["mode"] | null>(null);
 
   const destination = useMemo(
@@ -71,8 +73,19 @@ function Index() {
     destination.options[0]!;
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-signal selection:text-background">
-      <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
+    <div className="relative min-h-screen bg-background text-foreground selection:bg-signal selection:text-background">
+      <div className="aurora-sky" aria-hidden>
+        <div className="star-field" />
+        <div
+          className="aurora-band -top-[10vh]"
+          style={{ background: "linear-gradient(90deg, transparent, var(--aurora), var(--aurora-2), transparent)", opacity: 0.45 }}
+        />
+        <div
+          className="aurora-band top-[5vh]"
+          style={{ background: "linear-gradient(100deg, transparent 10%, var(--aurora-3), var(--aurora), transparent 90%)", opacity: 0.3, animationDelay: "-6s", animationDuration: "19s" }}
+        />
+      </div>
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-5 sm:px-6">
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="flex min-w-0 items-center gap-3">
             <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-signal font-display text-2xl leading-none text-background">
@@ -274,8 +287,61 @@ function Index() {
           </div>
         </div>
 
+        <section className="mt-8">
+          <div className="flex items-center gap-2 text-fog">
+            <span className="kbd text-[11px] tracking-[0.2em]">NEARBY · WHILE YOU WAIT</span>
+            <span className="h-px flex-1 bg-border" />
+            <span className="kbd text-[10px] tracking-widest text-fog">SPONSORED</span>
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {partners.map((p, i) => {
+              const done = booked[p.id];
+              return (
+                <div
+                  key={p.id}
+                  className="relative animate-rise overflow-hidden rounded-2xl border border-border bg-card p-4 backdrop-blur"
+                  style={{ animationDelay: `${i * 70}ms` }}
+                >
+                  <div
+                    className="pointer-events-none absolute -right-10 -top-10 size-32 rounded-full opacity-30 blur-2xl"
+                    style={{ background: p.kind === "beauty" ? "var(--aurora-3)" : "var(--aurora-2)" }}
+                  />
+                  <div className="relative flex items-start gap-3">
+                    <div className="grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-panel text-xl">
+                      {p.kind === "beauty" ? "✂" : "☕"}
+                    </div>
+                    <div className="min-w-0 flex-1 leading-tight">
+                      <div className="truncate font-display text-lg tracking-wide">{p.name}</div>
+                      <div className="kbd mt-0.5 truncate text-[10px] tracking-widest text-fog">{p.distance}</div>
+                    </div>
+                    {p.urgent ? (
+                      <span className="kbd shrink-0 animate-pulse-dot rounded-full bg-amber px-2.5 py-1 text-[10px] tracking-widest text-background">
+                        FREE IN {p.urgent}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="relative mt-3 text-sm">{p.pitch}</div>
+                  <div className="kbd relative text-[11px] tracking-widest text-aurora">{p.deal.toUpperCase()}</div>
+                  <div className="relative mt-3 flex items-center justify-between gap-3 border-t border-border pt-3">
+                    <span className="font-display text-2xl">{p.price}</span>
+                    <button
+                      onClick={() => setBooked((b) => ({ ...b, [p.id]: true }))}
+                      disabled={done}
+                      className={`rounded-xl px-4 py-2.5 font-display text-base tracking-wide transition-colors ${
+                        done ? "bg-panel text-aurora" : "bg-aurora text-background hover:bg-foreground"
+                      }`}
+                    >
+                      {done ? (p.kind === "beauty" ? "✓ BOOKED" : "✓ ORDERED") : `${p.cta} · ${p.price}`}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
         <footer className="kbd mt-6 flex items-center justify-between gap-3 text-[10px] tracking-[0.2em] text-fog">
-          <span className="truncate">CROSSING · URBAN TRANSIT</span>
+          <span className="truncate">CROSSING · ROVANIEMI · ARCTIC CIRCLE</span>
           <span className="shrink-0">UPDATED {time ?? "--:--"}</span>
         </footer>
       </div>
