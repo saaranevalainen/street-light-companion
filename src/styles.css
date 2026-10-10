@@ -168,8 +168,14 @@
   opacity: 0.5;
 }
 
+@keyframes screen-pulse {
+  0%, 100% { transform: scale(0.82); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.2; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .aurora-band { animation: none; }
+  .crossing-pin.has-screens span::after { animation: none; opacity: 0.6; transform: none; }
 }
 
 .leaflet-container { font-family: var(--font-body); background: var(--panel); }
@@ -188,3 +194,16 @@
 .pin-scooter { --pin-color: var(--aurora); }
 .pin-taxi { --pin-color: var(--amber); }
 .pin-service { --pin-color: var(--aurora-3); }
+.crossing-pin.has-screens span {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+.crossing-pin.has-screens span::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 2px solid var(--amber);
+  animation: screen-pulse 2s ease-in-out infinite;
+}

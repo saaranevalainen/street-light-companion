@@ -8,6 +8,8 @@ export type MapPlace = {
   address: string;
   description: string;
   sample?: boolean;
+  /** Paikka, jossa on suuret näytöt ja paljon uusia käyttäjiä (turistikohteet yms.). */
+  bigScreens?: boolean;
 };
 
 export const mapCategories: { id: PlaceCategory; label: string; symbol: string }[] = [
@@ -22,10 +24,10 @@ export const mapCategories: { id: PlaceCategory; label: string; symbol: string }
 // Landmark positions are approximate. All mobility/service points below are clearly labelled examples,
 // not verified stops, rental locations, businesses or live inventory.
 export const mapPlaces: MapPlace[] = [
-  { id: "arktikum", name: "Arktikum", category: "landmark", lat: 66.5086, lng: 25.7265, address: "Pohjoisranta 4", description: "Tiedekeskus ja museo Ounasjoen rannalla. Sijainti on suuntaa antava." },
-  { id: "station", name: "Rovaniemen rautatieasema", category: "landmark", lat: 66.4974, lng: 25.7055, address: "Ratakatu 3", description: "Rovaniemen rautatieasema. Sijainti on suuntaa antava." },
-  { id: "santa", name: "Joulupukin Pajakylä", category: "landmark", lat: 66.5436, lng: 25.8472, address: "Napapiiri", description: "Joulupukin Pajakylä Napapiirillä, keskustasta koilliseen. Sijainti on suuntaa antava." },
-  { id: "airport", name: "Rovaniemen lentoasema", category: "landmark", lat: 66.563, lng: 25.8307, address: "Lentokentäntie", description: "Rovaniemen lentoasema. Sijainti on suuntaa antava." },
+  { id: "arktikum", name: "Arktikum", category: "landmark", lat: 66.5086, lng: 25.7265, address: "Pohjoisranta 4", description: "Tiedekeskus ja museo Ounasjoen rannalla. Sijainti on suuntaa antava.", bigScreens: true },
+  { id: "station", name: "Rovaniemen rautatieasema", category: "landmark", lat: 66.4974, lng: 25.7055, address: "Ratakatu 3", description: "Rovaniemen rautatieasema. Sijainti on suuntaa antava.", bigScreens: true },
+  { id: "santa", name: "Joulupukin Pajakylä", category: "landmark", lat: 66.5436, lng: 25.8472, address: "Napapiiri", description: "Joulupukin Pajakylä Napapiirillä, keskustasta koilliseen. Sijainti on suuntaa antava.", bigScreens: true },
+  { id: "airport", name: "Rovaniemen lentoasema", category: "landmark", lat: 66.563, lng: 25.8307, address: "Lentokentäntie", description: "Rovaniemen lentoasema. Sijainti on suuntaa antava.", bigScreens: true },
   { id: "bus-ruokasenpuisto", name: "Ruokasenpuisto", category: "bus", lat: 66.4998, lng: 25.7314, address: "Ruokasenpuisto, keskusta", description: "Paikallisliikenteen keskeinen pysäkkialue. Sijainti on suuntaa antava; tarkista pysäkkikohtaiset linjat ja ajat Linkkarin reittioppaasta." },
   { id: "shared-center", name: "Keskustan kimppakyytipiste", category: "shared", lat: 66.5023, lng: 25.7298, address: "Koskikatu / Rovakatu", description: "Esimerkki kimppakyytien noutopisteestä. Noutopaikkaa tai saatavilla olevia kyytejä ei ole vahvistettu.", sample: true },
   { id: "shared-station", name: "Aseman kimppakyytipiste", category: "shared", lat: 66.4978, lng: 25.7063, address: "Rautatieaseman lähistö", description: "Esimerkkipiste jatkoyhteyksille. Ei varattavia kyytejä eikä vahvistettua noutopaikkaa.", sample: true },
@@ -39,7 +41,7 @@ export const mapPlaces: MapPlace[] = [
   { id: "salon", name: "Salonki Revontuli", category: "service", lat: 66.5031, lng: 25.7288, address: "Koskikadun lähistö", description: "Kuvitteellinen kampaamomainos. Yritystä, sijaintia ja vapaita aikoja ei ole vahvistettu. Ei oikeaa ajanvarausta.", sample: true },
 ];
 
-export function filterMapPlaces(places: MapPlace[], categories: PlaceCategory[], query: string) {
+export function filterMapPlaces(places: MapPlace[], categories: PlaceCategory[], query: string, onlyScreens = false) {
   const search = query.trim().toLocaleLowerCase("fi");
-  return places.filter((place) => categories.includes(place.category) && `${place.name} ${place.address}`.toLocaleLowerCase("fi").includes(search));
+  return places.filter((place) => categories.includes(place.category) && (!onlyScreens || place.bigScreens === true) && `${place.name} ${place.address}`.toLocaleLowerCase("fi").includes(search));
 }
