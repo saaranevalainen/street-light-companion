@@ -37,8 +37,11 @@ export default function RovaniemiMap({ places, selected, onSelect }: Props) {
       places.forEach((place) => {
         const category = mapCategories.find((c) => c.id === place.category);
         const active = selected?.id === place.id;
+        const bigScreens = place.bigScreens === true;
+        const size = bigScreens ? 48 : 38;
         const marker = L.marker([place.lat, place.lng], {
-          icon: L.divIcon({ className: `crossing-pin pin-${place.category}${active ? " is-selected" : ""}`, html: `<span>${category?.symbol ?? "•"}</span>`, iconSize: [38, 38], iconAnchor: [19, 38] }),
+          icon: L.divIcon({ className: `crossing-pin pin-${place.category}${bigScreens ? " has-screens" : ""}${active ? " is-selected" : ""}`, html: `<span>${category?.symbol ?? "•"}</span>`, iconSize: [size, size], iconAnchor: [size / 2, size] }),
+          zIndexOffset: bigScreens ? 600 : 0,
           title: place.name,
           alt: place.name,
           keyboard: true,
