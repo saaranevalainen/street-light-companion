@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "leaflet/dist/leaflet.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -170,3 +171,20 @@
 @media (prefers-reduced-motion: reduce) {
   .aurora-band { animation: none; }
 }
+
+.leaflet-container { font-family: var(--font-body); background: var(--panel); }
+.crossing-pin { background: none; border: none; }
+.crossing-pin span, .list-symbol {
+  display: grid; place-items: center; background: var(--pin-color, var(--signal));
+  color: var(--background); border: 2px solid var(--foreground); font-family: var(--font-mono); font-weight: 700;
+}
+.crossing-pin span { width: 38px; height: 38px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 8px var(--background); }
+.crossing-pin span { transform: none; border-radius: 50%; }
+.crossing-pin.is-selected span { outline: 3px solid var(--background); outline-offset: 3px; }
+.list-symbol { width: 30px; height: 30px; flex-shrink: 0; border-radius: 6px; border: none; }
+.pin-shared { --pin-color: var(--signal); }
+.pin-landmark { --pin-color: var(--foreground); }
+.pin-bus { --pin-color: var(--aurora-2); }
+.pin-scooter { --pin-color: var(--aurora); }
+.pin-taxi { --pin-color: var(--amber); }
+.pin-service { --pin-color: var(--aurora-3); }
