@@ -1,12 +1,20 @@
 import { createFileRoute, Link, ClientOnly } from "@tanstack/react-router";
 import { useCallback, useMemo, useState } from "react";
-import { ArrowLeft, MapPin, Monitor, Search, ExternalLink, X } from "lucide-react";
+import { ArrowLeft, MapPin, Monitor, Search, ExternalLink, X, LocateFixed, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import RovaniemiMap from "@/components/rovaniemi-map";
+import RovaniemiMap, { type MapRoute } from "@/components/rovaniemi-map";
 import { filterMapPlaces, mapCategories, mapPlaces, type MapPlace, type PlaceCategory } from "@/lib/map-places";
+import { destinations, fastest, type Mode } from "@/lib/trips";
+import { crossingStart, destinationCoords, modeColors, modeLabels, previewPath, type LatLng } from "@/lib/route-preview";
+
+type Search = { dest?: string; mode?: Mode };
 
 export const Route = createFileRoute("/kartta")({
+  validateSearch: (s: Record<string, unknown>): Search => ({
+    dest: typeof s.dest === "string" ? s.dest : undefined,
+    mode: s.mode === "walk" || s.mode === "bus" || s.mode === "ride" ? s.mode : undefined,
+  }),
   head: () => ({ meta: [
     { title: "Rovaniemen kartta — Crossing" },
     { name: "description", content: "Tutki Rovaniemen tärkeitä paikkoja sekä esimerkkipisteitä busseille, kimppakyydeille, takseille, potkulaudoille ja palveluille." },
@@ -19,16 +27,41 @@ export const Route = createFileRoute("/kartta")({
 });
 
 function MapPage() {
+  const search = Route.useSearch();
   const [categories, setCategories] = useState<PlaceCategory[]>(mapCategories.map((c) => c.id));
   const [screensOnly, setScreensOnly] = useState(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<MapPlace | null>(null);
+  const [destId, setDestId] = useState<string | null>(search.dest && destinationCoords[search.dest] ? search.dest : null);
+  const [previewMode, setPreviewMode] = useState<Mode | null>(search.mode ?? null);
+  const [chosenMode, setChosenMode] = useState<Mode | null>(null);
+  const [userLocation, setUserLocation] = useState<LatLng | null>(null);
+  const [locStatus, setLocStatus] = useState<string | null>(null);
   const places = useMemo(() => filterMapPlaces(mapPlaces, categories, query, screensOnly), [categories, query, screensOnly]);
   const selectPlace = useCallback((place: MapPlace) => setSelected(place), []);
   const toggle = (id: PlaceCategory) => {
     setCategories((current) => current.includes(id) ? current.filter((c) => c !== id) : [...current, id]);
     setSelected(null);
   };
+  const destination = destinations.find((d) => d.id === destId) ?? null;
+  const start = userLocation ?? crossingStart;
+  const activeMode = chosenMode ?? previewMode ?? (destination ? fastest(destination.options) : null);
+  const routes = useMemo<MapRoute[]>(() => {
+    if (!destination) return [];
+    const to = destinationCoords[destination.id]!;
+    const modes: Mode[] = chosenMode ? [chosenMode] : ["walk", "bus", "ride"];
+    return modes.map((m) => ({ id: m, path: previewPath(start, to, m), color: modeColors[m], active: m === activeMode }));
+  }, [destination, start, activeMode, chosenMode]);
+  const locate = () => {
+    if (!navigator.geolocation) { setLocStatus("Selain ei tue sijaintia. Lähtöpisteenä on risteys."); return; }
+    setLocStatus("Haetaan sijaintia…");
+    navigator.geolocation.getCurrentPosition(
+      (p) => { setUserLocation([p.coords.latitude, p.coords.longitude]); setLocStatus(null); },
+      () => setLocStatus("Sijaintia ei saatu. Lähtöpisteenä on risteys Koskikatu & Rovakatu."),
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  };
+  const pickDest = (id: string) => { setDestId(id); setChosenMode(null); setPreviewMode(null); if (!userLocation) locate(); };
 
   return <main className="min-h-screen bg-background text-foreground">
     <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
