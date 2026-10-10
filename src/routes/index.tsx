@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { Map } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import { crossing, destinations, fastest, type Option } from "@/lib/trips";
 import { partners } from "@/lib/partners";
@@ -101,6 +103,7 @@ function Index() {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-3">
+            <Button asChild variant="outline" className="gap-2"><Link to="/kartta"><Map /><span>Kartta</span></Link></Button>
             <div className="hidden items-center gap-2 rounded-full border border-border bg-panel px-3 py-2 sm:flex">
               <span className="size-2 animate-pulse-dot rounded-full bg-signal" />
               <span className="kbd text-[11px] tracking-widest text-fog">LIVE</span>
