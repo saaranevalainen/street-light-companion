@@ -282,9 +282,9 @@ function Index() {
                 ))}
               </div>
 
-              <button className="mt-6 w-full rounded-xl bg-signal py-4 font-display text-xl tracking-wide text-background transition-colors duration-200 hover:bg-foreground">
-                START THIS TRIP
-              </button>
+              <Link to="/kartta" search={{ dest: destination.id, mode: selected.mode }} className="mt-6 block w-full rounded-xl bg-signal py-4 text-center font-display text-xl tracking-wide text-background transition-colors duration-200 hover:bg-foreground">
+                PREVIEW ROUTE ON MAP
+              </Link>
               <div className="kbd mt-3 text-center text-[11px] tracking-widest text-fog">
                 EST. {selected.cost} · {selected.minutes} MIN
               </div>
