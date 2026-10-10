@@ -39,6 +39,19 @@ export const mapPlaces: MapPlace[] = [
   { id: "taxi-station", name: "Aseman taksipiste", category: "taxi", lat: 66.4971, lng: 25.7068, address: "Rautatieaseman lähistö", description: "Esimerkki aseman taksipisteestä. Ei reaaliaikaista saatavuutta tai taksin tilausta.", sample: true },
   { id: "cafe", name: "Kahvila Poro & Pulla", category: "service", lat: 66.5017, lng: 25.7286, address: "Rovakadun lähistö", description: "Kuvitteellinen kahvilamainos: kauralatte ja korvapuusti. Yritys, tarjous ja sijainti ovat esimerkkejä.", sample: true },
   { id: "salon", name: "Salonki Revontuli", category: "service", lat: 66.5031, lng: 25.7288, address: "Koskikadun lähistö", description: "Kuvitteellinen kampaamomainos. Yritystä, sijaintia ja vapaita aikoja ei ole vahvistettu. Ei oikeaa ajanvarausta.", sample: true },
+  { id: "bus-arktikum", name: "Arktikumin pysäkki", category: "bus", lat: 66.5068, lng: 25.7282, address: "Pohjoisranta", description: "Esimerkkipysäkki Arktikumin lähellä. Tarkista oikea pysäkki Linkkarin reittioppaasta.", sample: true },
+  { id: "bus-hallituskatu", name: "Hallituskadun pysäkki", category: "bus", lat: 66.5035, lng: 25.7225, address: "Hallituskadun lähistö", description: "Esimerkkipysäkki keskustan länsipuolella. Ei vahvistettuja linjoja tai aikoja.", sample: true },
+  { id: "bus-ounasvaara", name: "Ounasvaaran pysäkki", category: "bus", lat: 66.4975, lng: 25.7620, address: "Ounasvaarantien lähistö", description: "Esimerkkipysäkki Ounasvaaran rinteille. Ei vahvistettuja linjoja tai aikoja.", sample: true },
+  { id: "bus-santa", name: "Pajakylän pysäkki", category: "bus", lat: 66.5428, lng: 25.8455, address: "Napapiiri", description: "Esimerkkipysäkki Joulupukin Pajakylässä. Tarkista linja 8 Linkkarin reittioppaasta.", sample: true },
+  { id: "bus-airport", name: "Lentoaseman pysäkki", category: "bus", lat: 66.5640, lng: 25.8290, address: "Lentoaseman edusta", description: "Esimerkkipysäkki lentoasemalla. Ei vahvistettuja linjoja tai aikoja.", sample: true },
+  { id: "bus-rantavitikka", name: "Rantavitikan pysäkki", category: "bus", lat: 66.4955, lng: 25.7350, address: "Rantavitikan lähistö", description: "Esimerkkipysäkki joen eteläpuolella. Ei vahvistettuja linjoja tai aikoja.", sample: true },
+  { id: "cafe-river", name: "Kahvila Kemijoki", category: "service", lat: 66.5040, lng: 25.7350, address: "Rantakadun lähistö", description: "Kuvitteellinen kahvila joen rannalla. Yritys ja tarjous ovat esimerkkejä.", sample: true },
+  { id: "bakery", name: "Leipomo Lumihiutale", category: "service", lat: 66.5008, lng: 25.7262, address: "Maakuntakadun lähistö", description: "Kuvitteellinen leipomo: tuoreet pullat aamusta. Esimerkkiyritys.", sample: true },
+  { id: "nails", name: "Kynsistudio Kaamos", category: "service", lat: 66.5020, lng: 25.7240, address: "Valtakadun lähistö", description: "Kuvitteellinen kynsistudio. Ei oikeaa ajanvarausta.", sample: true },
+  { id: "barber", name: "Parturi Poronsarvi", category: "service", lat: 66.4995, lng: 25.7200, address: "Hallituskadun lähistö", description: "Kuvitteellinen parturi. Vapaita aikoja ei ole vahvistettu.", sample: true },
+  { id: "cafe-station", name: "Asemakahvila Raide", category: "service", lat: 66.4986, lng: 25.7100, address: "Rautatieaseman lähistö", description: "Kuvitteellinen kahvila matkustajille. Esimerkkiyritys.", sample: true },
+  { id: "spa", name: "Spa Revontulet", category: "service", lat: 66.5050, lng: 25.7310, address: "Pohjoisrannan lähistö", description: "Kuvitteellinen hyvinvointipalvelu. Ei oikeaa ajanvarausta.", sample: true },
+  { id: "cafe-santa", name: "Napapiirin kahvila", category: "service", lat: 66.5440, lng: 25.8490, address: "Napapiiri", description: "Kuvitteellinen kahvila Pajakylässä. Esimerkkiyritys.", sample: true },
 ];
 
 export function filterMapPlaces(places: MapPlace[], categories: PlaceCategory[], query: string, onlyScreens = false) {
