@@ -8,13 +8,16 @@ import { filterMapPlaces, mapCategories, mapPlaces, type MapPlace, type PlaceCat
 import { destinations, fastest, type Mode } from "@/lib/trips";
 import { crossingStart, destinationCoords, modeColors, modeLabels, previewPath, type LatLng } from "@/lib/route-preview";
 
-type Search = { dest?: string; mode?: Mode };
+type Search = { dest?: string | undefined; mode?: Mode | undefined };
 
 export const Route = createFileRoute("/kartta")({
-  validateSearch: (s: Record<string, unknown>): Search => ({
-    dest: typeof s.dest === "string" ? s.dest : undefined,
-    mode: s.mode === "walk" || s.mode === "bus" || s.mode === "ride" ? s.mode : undefined,
-  }),
+  validateSearch: (s: Record<string, unknown>): Search => {
+    const dest = s["dest"]; const mode = s["mode"];
+    return {
+      dest: typeof dest === "string" ? dest : undefined,
+      mode: mode === "walk" || mode === "bus" || mode === "ride" ? mode : undefined,
+    };
+  },
   head: () => ({ meta: [
     { title: "Rovaniemen kartta — Crossing" },
     { name: "description", content: "Tutki Rovaniemen tärkeitä paikkoja sekä esimerkkipisteitä busseille, kimppakyydeille, takseille, potkulaudoille ja palveluille." },
