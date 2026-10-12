@@ -15,7 +15,7 @@ describe("Rovaniemi map exploration", () => {
     expect(filterMapPlaces(mapPlaces, mapCategories.map((c) => c.id), "taksipiste", true)).toEqual([]);
   });
   test("search matches a real landmark and respects category selection", () => {
-    expect(filterMapPlaces(mapPlaces, mapCategories.map((c) => c.id), " ARKTIKUM ").map((p) => p.id)).toEqual(["arktikum"]);
+    expect(filterMapPlaces(mapPlaces, mapCategories.map((c) => c.id), " ARKTIKUM ").map((p) => p.id)).toEqual(["arktikum", "bus-arktikum"]);
     expect(filterMapPlaces(mapPlaces, ["scooter"], "Arktikum")).toEqual([]);
     expect(filterMapPlaces(mapPlaces, [], "")).toEqual([]);
   });

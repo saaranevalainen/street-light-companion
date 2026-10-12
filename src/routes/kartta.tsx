@@ -81,8 +81,37 @@ function MapPage() {
         <Button variant={screensOnly ? "default" : "outline"} aria-pressed={screensOnly} onClick={() => { setScreensOnly((value) => !value); setSelected(null); }}><Monitor />Vain suuret näytöt</Button>
       </div>
       <p className="mb-4 border-l-2 border-amber pl-3 text-sm text-fog">Liikkumis- ja palvelupisteet ovat esimerkkejä, eivät vahvistettuja pysäkkejä tai vuokrauspisteitä. Ei reaaliaikaista saatavuutta. Renkaalla vilkuvat pisteet ovat suurten näytöiden paikkoja, joissa on paljon uusia käyttäjiä.</p>
+      <section className="mb-5 rounded-lg border border-border bg-panel p-4" aria-label="Reitin esikatselu">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-display text-xl">Reitti kartalla</h2>
+          <Button variant="outline" size="sm" onClick={locate}><LocateFixed />{userLocation ? "Päivitä oma sijainti" : "Käytä omaa sijaintia"}</Button>
+        </div>
+        {locStatus && <p role="status" className="mt-2 text-sm text-amber">{locStatus}</p>}
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Valitse määränpää">
+          {destinations.map((d) => <Button key={d.id} variant={destId === d.id ? "default" : "outline"} aria-pressed={destId === d.id} onClick={() => pickDest(d.id)}>{d.name}</Button>)}
+        </div>
+        {destination && <div className="mt-4">
+          <p className="text-sm text-fog">Esikatsele vaihtoehdot ja valitse sitten reitti. Viivat ovat havainnollisia, eivät tarkkoja katureittejä.</p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+            {destination.options.map((o) => {
+              const active = activeMode === o.mode;
+              const chosen = chosenMode === o.mode;
+              return <div key={o.mode} className={`rounded-md border p-3 ${active ? "border-signal bg-accent" : "border-border"}`}>
+                <p className="flex items-center justify-between text-sm font-medium"><span>{modeLabels[o.mode]}</span>{chosen && <Check className="size-4 text-signal" aria-label="Valittu" />}</p>
+                <p className="kbd mt-1 text-xs text-fog">{o.name} · {o.minutes} MIN · {o.cost}</p>
+                <div className="mt-3 flex gap-2">
+                  <Button size="sm" variant={active && !chosen ? "default" : "outline"} onClick={() => setPreviewMode(o.mode)}>Esikatsele</Button>
+                  <Button size="sm" variant={chosen ? "default" : "outline"} onClick={() => { setChosenMode(o.mode); setPreviewMode(o.mode); }}>Valitse</Button>
+                </div>
+              </div>;
+            })}
+          </div>
+          {chosenMode && <p className="mt-3 text-sm text-signal">Valittu reitti: {modeLabels[chosenMode]} — {destination.name}. Lähtö: {userLocation ? "oma sijainti" : "risteys Koskikatu & Rovakatu"}.</p>}
+          <Button variant="ghost" size="sm" className="mt-2" onClick={() => { setDestId(null); setChosenMode(null); setPreviewMode(null); }}><X />Tyhjennä reitti</Button>
+        </div>}
+      </section>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="isolate overflow-hidden rounded-lg border border-border"><ClientOnly fallback={<div className="grid h-[440px] place-items-center bg-panel md:h-[620px]">Karttaa ladataan…</div>}><RovaniemiMap places={places} selected={selected} onSelect={selectPlace} /></ClientOnly></div>
+        <div className="isolate overflow-hidden rounded-lg border border-border"><ClientOnly fallback={<div className="grid h-[440px] place-items-center bg-panel md:h-[620px]">Karttaa ladataan…</div>}><RovaniemiMap places={places} selected={selected} onSelect={selectPlace} routes={routes} userLocation={userLocation} start={destination ? start : null} /></ClientOnly></div>
         <aside className="min-w-0" aria-label="Paikkojen tiedot">
           {selected ? <section className="mb-5 border-b border-border pb-5" aria-live="polite">
             <div className="flex items-center justify-between gap-2"><p className="text-xs font-medium text-signal">{mapCategories.find((c) => c.id === selected.category)?.label}</p><Button variant="ghost" size="icon" aria-label="Sulje paikan tiedot" onClick={() => setSelected(null)}><X /></Button></div>
