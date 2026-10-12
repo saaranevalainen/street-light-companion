@@ -103,7 +103,7 @@ function MapPage() {
           {destinations.map((d) => <Button key={d.id} variant={destId === d.id ? "default" : "outline"} aria-pressed={destId === d.id} onClick={() => pickDest(d.id)}>{d.name}</Button>)}
         </div>
         {destination && <div className="mt-4">
-          <p className="text-sm text-fog">Esikatsele vaihtoehdot ja valitse sitten reitti. Viivat ovat havainnollisia, eivät tarkkoja katureittejä.</p>
+          <p className="text-sm text-fog">Esikatsele vaihtoehdot ja valitse sitten reitti. Reitit seuraavat katuja OpenStreetMap-aineiston mukaan; bussin viiva on suuntaa antava, ei virallinen linjareitti.</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
             {destination.options.map((o) => {
               const active = activeMode === o.mode;
