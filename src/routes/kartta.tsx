@@ -118,7 +118,10 @@ function MapPage() {
               </div>;
             })}
           </div>
-          {chosenMode && <p className="mt-3 text-sm text-signal">Valittu reitti: {modeLabels[chosenMode]} — {destination.name}. Lähtö: {userLocation ? "oma sijainti" : "risteys Koskikatu & Rovakatu"}.</p>}
+          {chosenMode && <>
+            <p className="mt-3 text-sm text-signal">Valittu reitti: {modeLabels[chosenMode]} — {destination.name}. Lähtö: {userLocation ? "oma sijainti" : "risteys Koskikatu & Rovakatu"}.</p>
+            <Button asChild className="mt-4 w-full sm:w-auto"><Link to="/maksu" search={{ dest: destination.id, mode: chosenMode }}>Jatka esikatselusta maksuun</Link></Button>
+          </>}
           <Button variant="ghost" size="sm" className="mt-2" onClick={() => { setDestId(null); setChosenMode(null); setPreviewMode(null); }}><X />Tyhjennä reitti</Button>
         </div>}
       </section>

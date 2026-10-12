@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Map } from "lucide-react";
+import { Map, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { crossing, destinations, fastest, type Option } from "@/lib/trips";
@@ -66,6 +66,12 @@ function Index() {
   const [destinationId, setDestinationId] = useState(destinations[0]!.id);
   const [booked, setBooked] = useState<Record<string, boolean>>({});
   const [selectedMode, setSelectedMode] = useState<Option["mode"] | null>(null);
+  const [destinationQuery, setDestinationQuery] = useState("");
+
+  const filteredDestinations = useMemo(() => {
+    const search = destinationQuery.trim().toLocaleLowerCase("fi");
+    return destinations.filter((item) => item.name.toLocaleLowerCase("fi").includes(search));
+  }, [destinationQuery]);
 
   const destination = useMemo(
     () => destinations.find((d) => d.id === destinationId) ?? destinations[0]!,
@@ -137,11 +143,24 @@ function Index() {
           </div>
         </div>
 
-        <div className="mt-5">
-          <div className="flex items-center gap-2 text-fog">
-            <span className="kbd text-[11px] tracking-[0.2em]">DESTINATION</span>
-            <span className="h-px flex-1 bg-border" />
-          </div>
+        <nav className="mt-5 flex gap-2 overflow-x-auto rounded-2xl border border-border bg-panel p-1" aria-label="Etusivun välilehdet">
+          <a href="#travel-view" className="min-w-max rounded-xl bg-signal px-4 py-2.5 font-display tracking-wide text-background">MATKAT</a>
+          <a href="#nearby-services" className="min-w-max rounded-xl px-4 py-2.5 font-display tracking-wide text-fog transition-colors hover:bg-card hover:text-foreground">PALVELUT LÄHISTÖLLÄ</a>
+        </nav>
+
+        <div id="home-views" className="mt-4 flex snap-x snap-mandatory overflow-x-auto scroll-smooth lg:block">
+          <section id="travel-view" className="min-w-full snap-start pr-1">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-fog">
+                <span className="kbd text-[11px] tracking-[0.2em]">DESTINATION</span>
+                <span className="h-px w-16 bg-border sm:w-32" />
+              </div>
+              <button type="button" onClick={() => document.getElementById("nearby-services")?.scrollIntoView({ behavior: "smooth", inline: "start" })} className="inline-flex items-center gap-2 rounded-full border border-aurora bg-card px-3 py-2 text-sm text-aurora transition-colors hover:bg-aurora hover:text-background"><Sparkles className="size-4" />Palvelut lähistöllä</button>
+            </div>
+          <label className="relative mt-3 block">
+            <Search className="pointer-events-none absolute left-4 top-3.5 size-4 text-fog" />
+            <input value={destinationQuery} onChange={(event) => setDestinationQuery(event.target.value)} placeholder="Hae määränpäätä, esimerkiksi Arktikum" aria-label="Hae määränpäätä" className="w-full rounded-2xl border border-border bg-panel py-3 pl-11 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-fog focus:border-signal" />
+          </label>
           <div className="mt-3 flex items-center gap-3 rounded-2xl border border-border bg-panel px-4 py-3">
             <span className="size-2.5 shrink-0 rounded-full bg-signal" />
             <span className="truncate font-display text-2xl tracking-wide sm:text-3xl">
@@ -152,7 +171,7 @@ function Index() {
             </span>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
-            {destinations.map((d) => {
+            {filteredDestinations.map((d) => {
               const active = d.id === destination.id;
               return (
                 <button
@@ -171,8 +190,8 @@ function Index() {
                 </button>
               );
             })}
+            {filteredDestinations.length === 0 ? <p className="w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-fog">Määränpäätä ei löytynyt. Kokeile toista hakusanaa.</p> : null}
           </div>
-        </div>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-5">
           <div className="space-y-3 lg:col-span-3">
@@ -291,8 +310,9 @@ function Index() {
             </div>
           </div>
         </div>
+          </section>
 
-        <section className="mt-8">
+        <section id="nearby-services" className="mt-8 min-w-full snap-start lg:mt-8">
           <div className="flex items-center gap-2 text-fog">
             <span className="kbd text-[11px] tracking-[0.2em]">NEARBY · WHILE YOU WAIT</span>
             <span className="h-px flex-1 bg-border" />
@@ -344,6 +364,7 @@ function Index() {
             })}
           </div>
         </section>
+        </div>
 
         <footer className="kbd mt-6 flex items-center justify-between gap-3 text-[10px] tracking-[0.2em] text-fog">
           <span className="truncate">CROSSING · ROVANIEMI · ARCTIC CIRCLE</span>
