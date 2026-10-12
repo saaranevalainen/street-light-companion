@@ -17,6 +17,21 @@ export const destinationCoords: Record<string, LatLng> = {
 export const modeColors: Record<Mode, string> = { walk: "var(--signal)", bus: "var(--aurora-2)", ride: "var(--amber)" };
 export const modeLabels: Record<Mode, string> = { walk: "Kävely", bus: "Bussi", ride: "Kimppakyyti" };
 
+/** Fetch a real street route from the public OSRM demo server (OpenStreetMap data). Returns null on failure. */
+export async function fetchStreetRoute(from: LatLng, to: LatLng, mode: Mode): Promise<LatLng[] | null> {
+  const profile = mode === "walk" ? "foot" : "driving";
+  try {
+    const res = await fetch(`https://router.project-osrm.org/route/v1/${profile}/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const coords: [number, number][] | undefined = data?.routes?.[0]?.geometry?.coordinates;
+    if (!coords || coords.length < 2) return null;
+    return coords.map(([lng, lat]) => [lat, lng]);
+  } catch {
+    return null;
+  }
+}
+
 /** Illustrative route shape (not real road routing): slight curve, different per mode so previews are distinguishable. */
 export function previewPath(from: LatLng, to: LatLng, mode: Mode): LatLng[] {
   const bend = mode === "walk" ? 0 : mode === "bus" ? 0.18 : -0.18;
