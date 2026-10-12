@@ -8,14 +8,15 @@ import { filterMapPlaces, mapCategories, mapPlaces, type MapPlace, type PlaceCat
 import { destinations, fastest, type Mode } from "@/lib/trips";
 import { crossingStart, destinationCoords, fetchStreetRoute, modeColors, modeLabels, previewPath, type LatLng } from "@/lib/route-preview";
 
-type Search = { dest?: string | undefined; mode?: Mode | undefined };
+type Search = { dest?: string | undefined; mode?: Mode | undefined; category?: PlaceCategory | undefined };
 
 export const Route = createFileRoute("/kartta")({
   validateSearch: (s: Record<string, unknown>): Search => {
     const dest = s["dest"]; const mode = s["mode"];
     return {
       dest: typeof dest === "string" ? dest : undefined,
-      mode: mode === "walk" || mode === "bus" || mode === "ride" ? mode : undefined,
+      mode: mode === "walk" || mode === "bus" || mode === "ride" || mode === "taxi" ? mode : undefined,
+      category: typeof s["category"] === "string" && mapCategories.some((item) => item.id === s["category"]) ? s["category"] as PlaceCategory : undefined,
     };
   },
   head: () => ({ meta: [
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/kartta")({
 
 function MapPage() {
   const search = Route.useSearch();
-  const [categories, setCategories] = useState<PlaceCategory[]>(mapCategories.map((c) => c.id));
+  const [categories, setCategories] = useState<PlaceCategory[]>(search.category ? [search.category] : mapCategories.map((c) => c.id));
   const [screensOnly, setScreensOnly] = useState(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<MapPlace | null>(null);
@@ -54,7 +55,7 @@ function MapPage() {
     if (!destination) { setStreetPaths({}); return; }
     let cancelled = false;
     const to = destinationCoords[destination.id]!;
-    const modes: Mode[] = chosenMode ? [chosenMode] : ["walk", "bus", "ride"];
+    const modes: Mode[] = chosenMode ? [chosenMode] : ["walk", "bus", "ride", "taxi"];
     Promise.all(modes.map(async (m) => [m, await fetchStreetRoute(start, to, m)] as const)).then((entries) => {
       if (cancelled) return;
       setStreetPaths(Object.fromEntries(entries.filter(([, path]) => path !== null)) as Partial<Record<Mode, LatLng[]>>);
@@ -64,7 +65,7 @@ function MapPage() {
   const routes = useMemo<MapRoute[]>(() => {
     if (!destination) return [];
     const to = destinationCoords[destination.id]!;
-    const modes: Mode[] = chosenMode ? [chosenMode] : ["walk", "bus", "ride"];
+    const modes: Mode[] = chosenMode ? [chosenMode] : ["walk", "bus", "ride", "taxi"];
     return modes.map((m) => ({ id: m, path: streetPaths[m] ?? previewPath(start, to, m), color: modeColors[m], active: m === activeMode }));
   }, [destination, start, activeMode, chosenMode, streetPaths]);
   const locate = () => {
@@ -81,7 +82,7 @@ function MapPage() {
   return <main className="min-h-screen bg-background text-foreground">
     <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
-        <Link to="/" className="flex items-center gap-2 font-display text-xl text-signal"><span className="grid size-9 place-items-center rounded-md bg-signal text-background">C</span>CROSSING</Link>
+        <Link to="/" className="flex items-center gap-2 font-display text-xl text-signal"><span className="grid size-9 place-items-center rounded-md bg-signal text-background">R</span>RUDOLF</Link>
         <Button asChild variant="outline"><Link to="/"><ArrowLeft />Matkavaihtoehdot</Link></Button>
       </header>
       <div className="mb-5 mt-6 flex flex-wrap items-end justify-between gap-4">

@@ -14,8 +14,8 @@ export const destinationCoords: Record<string, LatLng> = {
   airport: [66.5648, 25.8304],
 };
 
-export const modeColors: Record<Mode, string> = { walk: "var(--signal)", bus: "var(--aurora-2)", ride: "var(--amber)" };
-export const modeLabels: Record<Mode, string> = { walk: "Kävely", bus: "Bussi", ride: "Kimppakyyti" };
+export const modeColors: Record<Mode, string> = { walk: "var(--signal)", bus: "var(--aurora-2)", ride: "var(--amber)", taxi: "var(--foreground)" };
+export const modeLabels: Record<Mode, string> = { walk: "Kävely", bus: "Bussi", ride: "Kimppakyyti", taxi: "Taksi" };
 
 /** Fetch a real street route from the public OSRM demo server (OpenStreetMap data). Returns null on failure. */
 export async function fetchStreetRoute(from: LatLng, to: LatLng, mode: Mode): Promise<LatLng[] | null> {
@@ -34,7 +34,7 @@ export async function fetchStreetRoute(from: LatLng, to: LatLng, mode: Mode): Pr
 
 /** Illustrative route shape (not real road routing): slight curve, different per mode so previews are distinguishable. */
 export function previewPath(from: LatLng, to: LatLng, mode: Mode): LatLng[] {
-  const bend = mode === "walk" ? 0 : mode === "bus" ? 0.18 : -0.18;
+  const bend = mode === "walk" ? 0 : mode === "bus" ? 0.18 : mode === "taxi" ? 0.08 : -0.18;
   const steps = 12;
   const dLat = to[0] - from[0];
   const dLng = to[1] - from[1];

@@ -92,17 +92,6 @@ function Index() {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground selection:bg-signal selection:text-background">
-      <div className="aurora-sky" aria-hidden>
-        <div className="star-field" />
-        <div
-          className="aurora-band -top-[10vh]"
-          style={{ background: "linear-gradient(90deg, transparent, var(--aurora), var(--aurora-2), transparent)", opacity: 0.45 }}
-        />
-        <div
-          className="aurora-band top-[5vh]"
-          style={{ background: "linear-gradient(100deg, transparent 10%, var(--aurora-3), var(--aurora), transparent 90%)", opacity: 0.3, animationDelay: "-6s", animationDuration: "19s" }}
-        />
-      </div>
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-5 sm:px-6">
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="flex min-w-0 items-center gap-3">
@@ -110,9 +99,9 @@ function Index() {
               C
             </div>
             <div className="min-w-0 leading-none">
-              <div className="truncate font-display text-xl tracking-wide">CROSSING</div>
+              <div className="truncate font-display text-xl tracking-wide">RUDOLF</div>
               <div className="kbd mt-1 truncate text-[10px] tracking-[0.2em] text-fog">
-                {crossing.id} · {crossing.name}
+                ROVANIEMI · NAPAPIIRI
               </div>
             </div>
           </div>
@@ -129,7 +118,7 @@ function Index() {
         </header>
 
         <div
-          className={`mt-5 flex items-center justify-between gap-4 rounded-2xl px-4 py-3 sm:px-5 ${
+          className={`signal-strip mt-3 flex items-center justify-between gap-4 rounded-2xl px-4 py-2 sm:px-5 ${
             green ? "bg-signal text-background" : "bg-card text-foreground"
           }`}
         >
@@ -137,7 +126,7 @@ function Index() {
             <span
               className={`size-3 shrink-0 animate-tick rounded-full ${green ? "bg-background" : "bg-amber"}`}
             />
-            <span className="truncate font-display text-lg tracking-wide sm:text-xl">
+            <span className="truncate font-display text-sm tracking-wide sm:text-base">
               {green ? "SIGNAL GREEN — GO" : "SIGNAL RED — WAIT"}
             </span>
           </div>
@@ -161,9 +150,9 @@ function Index() {
           <div className="route-cards">
             {destination.options.map((option) => {
               const active = option.mode === selected.mode;
-              return <Link key={option.mode} to="/kartta" search={{ dest: destination.id, mode: option.mode }} className={`route-card ${active ? "is-active" : ""}`}>
+              return <Link key={option.mode} to="/maksu" search={{ dest: destination.id, mode: option.mode }} className={`route-card ${active ? "is-active" : ""}`}>
                 <div className="route-card-icon"><ModeIcon mode={option.mode} /></div>
-                <div className="route-card-name">{option.mode === "walk" ? "KÄVELY" : option.mode === "bus" ? "BUSSI" : "KIMPPAKYYTI"}</div>
+                <div className="route-card-name">{option.mode === "walk" ? "KÄVELY" : option.mode === "bus" ? "BUSSI" : option.mode === "ride" ? "KIMPPAKYYTI" : "TAKSI"}</div>
                 <div className="route-card-time">{option.minutes}<span>min</span></div>
                 <div className="route-card-price">{formatCost(option.cost)}</div>
                 {active ? <span className="route-card-badge">HALVIN</span> : <span className="route-card-arrow"><ArrowUpRight className="size-4" /></span>}
@@ -229,7 +218,7 @@ function Index() {
             {filteredDestinations.length === 0 ? <p className="w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-fog">Määränpäätä ei löytynyt. Kokeile toista hakusanaa.</p> : null}
           </div>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-5">
+        <div className="hidden mt-6 grid gap-4 lg:grid-cols-5">
           <div className="space-y-3 lg:col-span-3">
             <div className="flex items-center gap-2 text-fog">
               <span className="kbd text-[11px] tracking-[0.2em]">OPTIONS</span>
@@ -245,7 +234,7 @@ function Index() {
               return (
                 <Link
                   key={option.mode}
-                  to="/kartta"
+                  to="/maksu"
                   search={{ dest: destination.id, mode: option.mode }}
                   className={`relative block w-full animate-rise rounded-2xl bg-card p-4 text-left transition-colors hover:border-signal hover:bg-accent sm:p-5 ${
                     isSelected ? "border-2 border-signal" : "border border-border"
@@ -405,7 +394,7 @@ function Index() {
         </div>
 
         <footer className="kbd mt-6 flex items-center justify-between gap-3 text-[10px] tracking-[0.2em] text-fog">
-          <span className="truncate">CROSSING · ROVANIEMI · ARCTIC CIRCLE</span>
+          <span className="truncate">RUDOLF · ROVANIEMI · ARCTIC CIRCLE</span>
           <span className="shrink-0">UPDATED {time ?? "--:--"}</span>
         </footer>
       </div>

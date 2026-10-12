@@ -10,12 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FraasitRouteImport } from './routes/fraasit'
 import { Route as KarttaRouteImport } from './routes/kartta'
 import { Route as MaksuRouteImport } from './routes/maksu'
+import { Route as NahtavyydetRouteImport } from './routes/nahtavyydet'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FraasitRoute = FraasitRouteImport.update({
+  id: '/fraasit',
+  path: '/fraasit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KarttaRoute = KarttaRouteImport.update({
@@ -28,35 +35,48 @@ const MaksuRoute = MaksuRouteImport.update({
   path: '/maksu',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NahtavyydetRoute = NahtavyydetRouteImport.update({
+  id: '/nahtavyydet',
+  path: '/nahtavyydet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/fraasit': typeof FraasitRoute
   '/kartta': typeof KarttaRoute
   '/maksu': typeof MaksuRoute
+  '/nahtavyydet': typeof NahtavyydetRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/fraasit': typeof FraasitRoute
   '/kartta': typeof KarttaRoute
   '/maksu': typeof MaksuRoute
+  '/nahtavyydet': typeof NahtavyydetRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/fraasit': typeof FraasitRoute
   '/kartta': typeof KarttaRoute
   '/maksu': typeof MaksuRoute
+  '/nahtavyydet': typeof NahtavyydetRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/kartta' | '/maksu'
+  fullPaths: '/' | '/fraasit' | '/kartta' | '/maksu' | '/nahtavyydet'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/kartta' | '/maksu'
-  id: '__root__' | '/' | '/kartta' | '/maksu'
+  to: '/' | '/fraasit' | '/kartta' | '/maksu' | '/nahtavyydet'
+  id: '__root__' | '/' | '/fraasit' | '/kartta' | '/maksu' | '/nahtavyydet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FraasitRoute: typeof FraasitRoute
   KarttaRoute: typeof KarttaRoute
   MaksuRoute: typeof MaksuRoute
+  NahtavyydetRoute: typeof NahtavyydetRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -66,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fraasit': {
+      id: '/fraasit'
+      path: '/fraasit'
+      fullPath: '/fraasit'
+      preLoaderRoute: typeof FraasitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kartta': {
@@ -82,13 +109,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MaksuRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/nahtavyydet': {
+      id: '/nahtavyydet'
+      path: '/nahtavyydet'
+      fullPath: '/nahtavyydet'
+      preLoaderRoute: typeof NahtavyydetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FraasitRoute: FraasitRoute,
   KarttaRoute: KarttaRoute,
   MaksuRoute: MaksuRoute,
+  NahtavyydetRoute: NahtavyydetRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
