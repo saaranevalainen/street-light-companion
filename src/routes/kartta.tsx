@@ -1,12 +1,12 @@
 import { createFileRoute, Link, ClientOnly } from "@tanstack/react-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, MapPin, Monitor, Search, ExternalLink, X, LocateFixed, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import RovaniemiMap, { type MapRoute } from "@/components/rovaniemi-map";
 import { filterMapPlaces, mapCategories, mapPlaces, type MapPlace, type PlaceCategory } from "@/lib/map-places";
 import { destinations, fastest, type Mode } from "@/lib/trips";
-import { crossingStart, destinationCoords, modeColors, modeLabels, previewPath, type LatLng } from "@/lib/route-preview";
+import { crossingStart, destinationCoords, fetchStreetRoute, modeColors, modeLabels, previewPath, type LatLng } from "@/lib/route-preview";
 
 type Search = { dest?: string | undefined; mode?: Mode | undefined };
 
@@ -49,12 +49,24 @@ function MapPage() {
   const destination = destinations.find((d) => d.id === destId) ?? null;
   const start = userLocation ?? crossingStart;
   const activeMode = chosenMode ?? previewMode ?? (destination ? fastest(destination.options) : null);
+  const [streetPaths, setStreetPaths] = useState<Partial<Record<Mode, LatLng[]>>>({});
+  useEffect(() => {
+    if (!destination) { setStreetPaths({}); return; }
+    let cancelled = false;
+    const to = destinationCoords[destination.id]!;
+    const modes: Mode[] = chosenMode ? [chosenMode] : ["walk", "bus", "ride"];
+    Promise.all(modes.map(async (m) => [m, await fetchStreetRoute(start, to, m)] as const)).then((entries) => {
+      if (cancelled) return;
+      setStreetPaths(Object.fromEntries(entries.filter(([, path]) => path !== null)) as Partial<Record<Mode, LatLng[]>>);
+    });
+    return () => { cancelled = true; };
+  }, [destination, start, chosenMode]);
   const routes = useMemo<MapRoute[]>(() => {
     if (!destination) return [];
     const to = destinationCoords[destination.id]!;
     const modes: Mode[] = chosenMode ? [chosenMode] : ["walk", "bus", "ride"];
-    return modes.map((m) => ({ id: m, path: previewPath(start, to, m), color: modeColors[m], active: m === activeMode }));
-  }, [destination, start, activeMode, chosenMode]);
+    return modes.map((m) => ({ id: m, path: streetPaths[m] ?? previewPath(start, to, m), color: modeColors[m], active: m === activeMode }));
+  }, [destination, start, activeMode, chosenMode, streetPaths]);
   const locate = () => {
     if (!navigator.geolocation) { setLocStatus("Selain ei tue sijaintia. Lähtöpisteenä on risteys."); return; }
     setLocStatus("Haetaan sijaintia…");
@@ -91,7 +103,7 @@ function MapPage() {
           {destinations.map((d) => <Button key={d.id} variant={destId === d.id ? "default" : "outline"} aria-pressed={destId === d.id} onClick={() => pickDest(d.id)}>{d.name}</Button>)}
         </div>
         {destination && <div className="mt-4">
-          <p className="text-sm text-fog">Esikatsele vaihtoehdot ja valitse sitten reitti. Viivat ovat havainnollisia, eivät tarkkoja katureittejä.</p>
+          <p className="text-sm text-fog">Esikatsele vaihtoehdot ja valitse sitten reitti. Reitit seuraavat katuja OpenStreetMap-aineiston mukaan; bussin viiva on suuntaa antava, ei virallinen linjareitti.</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
             {destination.options.map((o) => {
               const active = activeMode === o.mode;
