@@ -49,12 +49,24 @@ function MapPage() {
   const destination = destinations.find((d) => d.id === destId) ?? null;
   const start = userLocation ?? crossingStart;
   const activeMode = chosenMode ?? previewMode ?? (destination ? fastest(destination.options) : null);
+  const [streetPaths, setStreetPaths] = useState<Partial<Record<Mode, LatLng[]>>>({});
+  useEffect(() => {
+    if (!destination) { setStreetPaths({}); return; }
+    let cancelled = false;
+    const to = destinationCoords[destination.id]!;
+    const modes: Mode[] = chosenMode ? [chosenMode] : ["walk", "bus", "ride"];
+    Promise.all(modes.map(async (m) => [m, await fetchStreetRoute(start, to, m)] as const)).then((entries) => {
+      if (cancelled) return;
+      setStreetPaths(Object.fromEntries(entries.filter(([, path]) => path !== null)) as Partial<Record<Mode, LatLng[]>>);
+    });
+    return () => { cancelled = true; };
+  }, [destination, start, chosenMode]);
   const routes = useMemo<MapRoute[]>(() => {
     if (!destination) return [];
     const to = destinationCoords[destination.id]!;
     const modes: Mode[] = chosenMode ? [chosenMode] : ["walk", "bus", "ride"];
-    return modes.map((m) => ({ id: m, path: previewPath(start, to, m), color: modeColors[m], active: m === activeMode }));
-  }, [destination, start, activeMode, chosenMode]);
+    return modes.map((m) => ({ id: m, path: streetPaths[m] ?? previewPath(start, to, m), color: modeColors[m], active: m === activeMode }));
+  }, [destination, start, activeMode, chosenMode, streetPaths]);
   const locate = () => {
     if (!navigator.geolocation) { setLocStatus("Selain ei tue sijaintia. Lähtöpisteenä on risteys."); return; }
     setLocStatus("Haetaan sijaintia…");
