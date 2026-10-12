@@ -1,12 +1,12 @@
 import { createFileRoute, Link, ClientOnly } from "@tanstack/react-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, MapPin, Monitor, Search, ExternalLink, X, LocateFixed, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import RovaniemiMap, { type MapRoute } from "@/components/rovaniemi-map";
 import { filterMapPlaces, mapCategories, mapPlaces, type MapPlace, type PlaceCategory } from "@/lib/map-places";
 import { destinations, fastest, type Mode } from "@/lib/trips";
-import { crossingStart, destinationCoords, modeColors, modeLabels, previewPath, type LatLng } from "@/lib/route-preview";
+import { crossingStart, destinationCoords, fetchStreetRoute, modeColors, modeLabels, previewPath, type LatLng } from "@/lib/route-preview";
 
 type Search = { dest?: string | undefined; mode?: Mode | undefined };
 
