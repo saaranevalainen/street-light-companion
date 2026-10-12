@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Map, Search, Sparkles } from "lucide-react";
+import { ArrowUpRight, BusFront, CarFront, Clock3, Footprints, Map, Navigation, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import { crossing, destinations, fastest } from "@/lib/trips";
+import { crossing, destinations, fastest, type Option } from "@/lib/trips";
 import { partners } from "@/lib/partners";
 
 export const Route = createFileRoute("/")({
@@ -58,6 +58,16 @@ function useSignal() {
   }, [green]);
 
   return { seconds, green };
+}
+
+function ModeIcon({ mode }: { mode: Option["mode"] }) {
+  if (mode === "walk") return <Footprints className="size-12" strokeWidth={1.7} />;
+  if (mode === "bus") return <BusFront className="size-12" strokeWidth={1.7} />;
+  return <CarFront className="size-12" strokeWidth={1.7} />;
+}
+
+function formatCost(cost: string) {
+  return cost === "FREE" ? "0 €" : cost.replace("€", "€").replace(".", ",");
 }
 
 function Index() {
@@ -140,6 +150,35 @@ function Index() {
             </span>
           </div>
         </div>
+
+        <section className="route-showcase mt-4" aria-label="Reittivaihtoehdot">
+          <div className="route-showcase-top">
+            <div className="route-status-icon"><Footprints className="size-7" /></div>
+            <div className="route-status-copy"><strong>{destination.name}</strong><span>Valitse sopivin tapa jatkaa</span></div>
+            <Clock3 className="size-5 text-signal" />
+            <strong className="route-status-time">{selected.minutes} min</strong>
+          </div>
+          <div className="route-cards">
+            {destination.options.map((option) => {
+              const active = option.mode === selected.mode;
+              return <Link key={option.mode} to="/kartta" search={{ dest: destination.id, mode: option.mode }} className={`route-card ${active ? "is-active" : ""}`}>
+                <div className="route-card-icon"><ModeIcon mode={option.mode} /></div>
+                <div className="route-card-name">{option.mode === "walk" ? "KÄVELY" : option.mode === "bus" ? "BUSSI" : "KIMPPAKYYTI"}</div>
+                <div className="route-card-time">{option.minutes}<span>min</span></div>
+                <div className="route-card-price">{formatCost(option.cost)}</div>
+                {active ? <span className="route-card-badge">HALVIN</span> : <span className="route-card-arrow"><ArrowUpRight className="size-4" /></span>}
+              </Link>;
+            })}
+          </div>
+          <Link to="/kartta" search={{ dest: destination.id, mode: selected.mode }} className="route-map-preview">
+            <div className="route-map-grid" />
+            <div className="route-map-water" />
+            <div className="route-map-label route-map-label-city">ROVANIEMI</div>
+            <div className="route-map-label route-map-label-river">Kemijoki</div>
+            <div className="route-map-path"><span className="route-map-start"><Navigation className="size-4" /></span><span className="route-map-dots" /><span className="route-map-destination"><Map className="size-5" /></span></div>
+            <span className="route-map-open">Avaa kartta <ArrowUpRight className="size-4" /></span>
+          </Link>
+        </section>
 
         <nav className="mt-5 flex gap-2 overflow-x-auto rounded-2xl border border-border bg-panel p-1" aria-label="Etusivun välilehdet">
           <a href="#travel-view" className="min-w-max rounded-xl bg-signal px-4 py-2.5 font-display tracking-wide text-background">MATKAT</a>
