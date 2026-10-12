@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Map, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import { crossing, destinations, fastest, type Option } from "@/lib/trips";
+import { crossing, destinations, fastest } from "@/lib/trips";
 import { partners } from "@/lib/partners";
 
 export const Route = createFileRoute("/")({
@@ -65,7 +65,6 @@ function Index() {
   const { seconds, green } = useSignal();
   const [destinationId, setDestinationId] = useState(destinations[0]!.id);
   const [booked, setBooked] = useState<Record<string, boolean>>({});
-  const [selectedMode, setSelectedMode] = useState<Option["mode"] | null>(null);
   const [destinationQuery, setDestinationQuery] = useState("");
 
   const filteredDestinations = useMemo(() => {
@@ -79,8 +78,7 @@ function Index() {
   );
   const recommended = fastest(destination.options);
   const selected =
-    destination.options.find((o) => o.mode === (selectedMode ?? recommended)) ??
-    destination.options[0]!;
+    destination.options.find((o) => o.mode === recommended) ?? destination.options[0]!;
 
   return (
     <div className="relative min-h-screen bg-background text-foreground selection:bg-signal selection:text-background">
@@ -178,7 +176,6 @@ function Index() {
                   key={d.id}
                   onClick={() => {
                     setDestinationId(d.id);
-                    setSelectedMode(null);
                   }}
                   className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     active
@@ -207,10 +204,11 @@ function Index() {
               const isRecommended = option.mode === recommended;
               const isSelected = option.mode === selected.mode;
               return (
-                <button
+                <Link
                   key={option.mode}
-                  onClick={() => setSelectedMode(option.mode)}
-                  className={`relative block w-full animate-rise rounded-2xl bg-card p-4 text-left sm:p-5 ${
+                  to="/kartta"
+                  search={{ dest: destination.id, mode: option.mode }}
+                  className={`relative block w-full animate-rise rounded-2xl bg-card p-4 text-left transition-colors hover:border-signal hover:bg-accent sm:p-5 ${
                     isSelected ? "border-2 border-signal" : "border border-border"
                   }`}
                   style={{ animationDelay: `${i * 80}ms` }}
@@ -257,7 +255,8 @@ function Index() {
                       {option.cost}
                     </span>
                   </div>
-                </button>
+                  <div className="mt-3 text-right font-display text-sm tracking-wide text-signal">ESIKATSELE KARTALLA →</div>
+                </Link>
               );
             })}
           </div>
